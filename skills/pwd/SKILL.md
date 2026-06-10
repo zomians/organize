@@ -51,6 +51,7 @@ git/issue の状態は `git status` `git branch --show-current` `gh issue list` 
 - 「事実を確認しないと答えが出ない」論点が出たら、その場で裏取りする
 - 重い調査（多源・要検証・レポート級）は `deep-research` skill に委譲する
 - 検索クエリ等で外部に送る内容に、対話で出た機密情報を含めない
+- 調べた問いと結論（出典つき）も signal として扱い、該当 doc への反映を提案する（→ 3. signal の逆引き）
 
 ## 3. signal の逆引き（Doc Catalog）
 
