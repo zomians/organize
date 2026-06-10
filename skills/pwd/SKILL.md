@@ -43,7 +43,7 @@ git/issue の状態は `git status` `git branch --show-current` `gh issue list` 
 - **具体シナリオでストレステスト**: 概念の関係が語られたら、境界を突くエッジケースのシナリオを発明してぶつけ、曖昧さを残さない
 - **コードとの矛盾を突きつける**（コード有り案件のみ。コード無し案件〔マーケ・リサーチ等〕では skip）: 利用者の説明とコードの実態が食い違ったら surface する（「コードは Order 全体を cancel しているが、いま部分キャンセル可能と言った。どちらが正しい？」）
 
-対話で確定した内容（解消した矛盾・確定した用語）は、その場で該当 doc へ反映する（→ 3. signal の逆引き）。
+対話で確定した内容（解消した矛盾・確定した用語）も signal として扱う（→ 3. signal の逆引き）。
 
 調べ方:
 
@@ -51,14 +51,14 @@ git/issue の状態は `git status` `git branch --show-current` `gh issue list` 
 - 「事実を確認しないと答えが出ない」論点が出たら、その場で裏取りする
 - 重い調査（多源・要検証・レポート級）は `deep-research` skill に委譲する
 - 検索クエリ等で外部に送る内容に、対話で出た機密情報を含めない
-- 調べた問いと結論（出典つき）も signal として扱い、該当 doc への反映を提案する（→ 3. signal の逆引き）
+- 調べた問いと結論（出典つき）も signal として扱う（→ 3. signal の逆引き）
 
 ## 3. signal の逆引き（Doc Catalog）
 
-対話中に「特定の doc が必要だ」と示す signal が surface したら、[catalog.md](./catalog.md) を逆引きし、該当 doc の作成 / 更新を能動提案する。
+対話中に「特定の doc が必要だ」と示す signal が surface したら、[catalog.md](./catalog.md) を逆引きする。
 
-- 全 doc **lazy 作成**。signal が出るまで作らない。空の placeholder は一切置かない
-- **inline 更新**: 関連話題が出たその場で更新する（まとめて後でやらない）
+- 該当 doc が**まだ無ければ、作成を能動提案する**（lazy 作成。signal が出るまで作らない。空の placeholder は一切置かない）
+- 該当 doc が**既に有れば、その場で inline 更新する**（まとめて後でやらない）
 - **大文字 md = 残す（git 管理対象）/ 小文字 md = 残さない（揮発）**の命名規約に従う
 - Catalog にない doc が必要になったら、必要性を判断したうえで catalog.md に行を足す
 
