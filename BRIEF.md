@@ -15,7 +15,7 @@ terminal 起動
    ↓
 claude 起動
    ↓
-壁打ちして現状把握 (grill)
+現状把握 (壁打ち / リサーチ)
    ↓
 ドキュメント化 (md 主体。html は閲覧用の派生物として必要時のみ)
    ↓
@@ -41,14 +41,14 @@ claude 起動
 
 | skill | 担当ステップ |
 |-------|-------------|
-| grill | 壁打ちして現状把握。一問一答・推奨案付きで意思決定ツリーを一枝ずつ潰す |
+| grill | 現状把握の壁打ち。一問一答・推奨案付きで意思決定ツリーを一枝ずつ潰す |
 | doc 化 | 会話を読み、md にドキュメント化 (必要なら html 派生も) |
 | repo 化 | 条件分岐 1 の入口。git init + gh repo create + push |
 | issue 作成 | 高クオリティな GitHub issue の起票 |
 | commit | Conventional Commits での commit |
 | PR 完了 | PR 作成 → squash merge → branch 削除 |
 
-条件分岐 (残すべきか否か) の判断基準は doc 化 / repo 化 skill の設計時に詰める。
+条件分岐 (残すべきか否か) の判断基準は doc 化 / repo 化 skill の設計時に詰める。リサーチを独立 skill にするか grill 内で必要時に行うかも設計時の論点。
 
 ## 成功基準
 
