@@ -55,7 +55,7 @@ git/issue の状態は `git status` `git branch --show-current` `gh issue list` 
 
 ## 3. signal の逆引き（Doc Catalog）
 
-対話中に「特定の doc が必要だ」と示す signal が surface したら、[catalog.md](./catalog.md) を逆引きする。
+対話に入る前に [catalog.md](./catalog.md) の signal 列に目を通しておく。対話中に話題がそのいずれかに踏み込んだら（= signal が surface したら）、catalog を逆引きして該当 doc に当てる。doc ごとに要否を聞いて回る走査はしない。
 
 - 該当 doc が**まだ無ければ、作成を能動提案する**（lazy 作成。signal が出るまで作らない。空の placeholder は一切置かない）
 - 該当 doc が**既に有れば、その場で inline 更新する**（まとめて後でやらない）
