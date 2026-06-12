@@ -32,9 +32,9 @@ organize は Claude Code plugin。空ディレクトリでも skill が即使え
 
 **コードとの照合はコード有り案件のみ**。コード無し案件（マーケ・リサーチ等）では skip する。
 
-### 後続フェーズ skill（未設計）
+### 後続フェーズ skill
 
-doc 化 / repo 化 / issue 作成 / commit / PR 完了。pwd の設計確定後に書き下ろす。それぞれ末尾で次フェーズを促す。
+doc 化 / repo 化 / issue 作成（`create-issue`）/ commit（`commit`）/ PR 完了。それぞれ末尾で次フェーズを促す。doc 化 / repo 化 / PR 完了は未設計で、必要になったときに書き下ろす。
 
 ## Doc Catalog（plugin 同梱の辞書）
 
