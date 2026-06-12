@@ -14,7 +14,7 @@ description: 現在地判定と現状把握の対話を兼ねる organize の入
 | 現在地 | 兆候 | 案内先 |
 |---|---|---|
 | 空ディレクトリ / 新ネタ | ファイルがほぼ無い・初めての話題 | 「2. 現状把握の対話」へ |
-| doc 整備途中 | 大文字 md が一部あり、会話がその続き | 対話の続行（未解決の論点から再開） |
+| doc 整備途中 | Catalog の doc（BRIEF.md 等）が一部あり、会話がその続き | 対話の続行（未解決の論点から再開） |
 | 整理は済み、残すか判断する局面 | 頭は整理済み、成果の扱いだけ未定 | 「4. 出口の分岐」へ |
 | 既発行 issue に対応 | open issue があり着手の意図 | 対処フェーズ（`feature/<#>-<summary>` branch → 作業 → PR） |
 | 作業途中（branch 上） | feature branch 上に未コミット / 未 PR の変更 | commit / PR 完了へ |
@@ -59,7 +59,6 @@ git/issue の状態は `git status` `git branch --show-current` `gh issue list` 
 
 - 該当 doc が**まだ無ければ、作成を能動提案する**（lazy 作成。signal が出るまで作らない。空の placeholder は一切置かない）
 - 該当 doc が**既に有れば、その場で inline 更新する**（まとめて後でやらない）
-- **大文字 md = 残す（git 管理対象）/ 小文字 md = 残さない（揮発）**の命名規約に従う
 - Catalog にない doc が必要になったら、必要性を判断したうえで catalog.md に行を足す
 
 ## 4. 出口の分岐
@@ -68,11 +67,11 @@ git/issue の状態は `git status` `git branch --show-current` `gh issue list` 
 
 | 出口 | いつ | 次の誘導 |
 |---|---|---|
-| A. doc に残す（大文字 md） | 残す価値がある | 対話を振り返り、doc 未反映の内容を Catalog に従い作成 / 更新 → commit へ |
+| A. doc に残す（Catalog doc） | 残す価値がある | 対話を振り返り、doc 未反映の内容を Catalog に従い作成 / 更新 → commit へ |
 | B. issue を直接発行 | やることが明確で、doc を経ずタスク化したい | `create-issue` skill へ |
 | C. doc も issue も両方 | 残す価値があり、かつ着手もする | doc 化（A と同じ）→ `create-issue` skill へ |
 | D. 何も残さず動く / 終える | 整理で十分、git 管理不要 | そのまま実行 / 終了 |
-| E. handoff して中断 | 整理が途中だがセッションが尽きた | 小文字 `handoff.md` に到達点・未解決論点・次の一歩を書いて終了 |
+| E. handoff して中断 | 次のセッションに引き継ぎたい | `handoff.md`（commit しない）に到達点・未解決論点・次の一歩を書いて終了 |
 
 ## 5. 締め
 
