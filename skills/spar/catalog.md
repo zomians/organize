@@ -1,6 +1,6 @@
 # Doc Catalog
 
-organize plugin が同梱する doc の辞書であり、**単一の真実**。対話中に signal が surface したら pwd が逆引きする（走査ではなく逆引き）。
+organize plugin が同梱する doc の辞書であり、**単一の真実**。対話中に signal が surface したら spar が逆引きする（走査ではなく逆引き）。
 
 すべて領域非依存。1 行ガードは「その doc に何を書き、何を書かないか」。ガードが未記載の doc は、必要になったときに詰める。
 
