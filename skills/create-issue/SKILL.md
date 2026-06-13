@@ -1,6 +1,9 @@
 ---
 name: create-issue
 description: GitHub issue をテンプレートに沿って高クオリティに起票する。「issue にしたい」「課題化したい」「タスク化したい」という意図が出たとき、または整理の出口として issue 起票が選ばれたときに使う。
+allowed-tools:
+  - Read(./template.md)
+  - Bash(gh issue create:*)
 ---
 
 # create-issue
