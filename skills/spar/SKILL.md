@@ -53,7 +53,7 @@ description: 整理の入口で行う、計画を鍛えるための壁打ち ski
 
 | 出口 | いつ | 次の誘導 |
 |---|---|---|
-| A. doc に残す（Catalog doc） | 残す価値がある | 対話を振り返り、doc 未反映の内容を Catalog に従い作成 / 更新（リポ未初期化なら先に repo 化）→ commit へ |
+| A. doc に残す（Catalog doc） | 残す価値がある | 対話を振り返り、doc 未反映の内容を Catalog に従い作成 / 更新（リポ未初期化なら先に `git init`。GitHub と繋ぐなら `gh repo create`）→ commit へ |
 | B. issue を直接発行 | やることが明確で、doc を経ずタスク化したい | `create-issue` skill へ |
 | C. doc も issue も両方 | 残す価値があり、かつ着手もする | doc 化（A と同じ）→ `create-issue` skill へ |
 | D. 何も残さず動く / 終える | 整理で十分、git 管理不要 | そのまま実行 / 終了 |
