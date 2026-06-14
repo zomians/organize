@@ -17,6 +17,8 @@
  ├─ 何も残さず終える
  └─ handoff して中断（揮発・commit しない）
    ↓  残すと決めたら
+ リポ化（新規なら git init / gh repo create・既存なら該当リポへ）
+   ↓
  issue → 作業ブランチ → PR → squash merge → branch 削除
 ```
 
@@ -70,3 +72,7 @@ plugin が全案件に持たせる規律:
 - [BRIEF.md](./BRIEF.md) — 目的・スコープ・成功基準
 - [ARCHITECTURE.md](./ARCHITECTURE.md) — 構造・skill の座組み・運用規約（なぜその形か）
 - [CONTEXT.md](./CONTEXT.md) — この案件固有の用語集
+
+## ライセンス
+
+[MIT License](./LICENSE) で公開している。
