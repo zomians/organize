@@ -53,11 +53,9 @@ description: 整理の入口で行う、計画を鍛えるための壁打ち ski
 
 | 出口 | いつ | 次の誘導 |
 |---|---|---|
-| 残す（doc / issue / 両方） | 残す価値がある、または着手する | 何を doc 化し何を issue 化するかを対話で決め、**例外なく** issue → branch → PR に乗せる。`create-issue` skill へ（doc 化も「整理の成果を doc 化する」タスクとして issue にし、同じ branch で doc を作成 / 更新する）。新規案件はまず `git init` / `gh repo create` → `#1「整理の成果を doc 化する」` issue → `feature/1-init` ブランチ → PR |
+| 残す | 残す価値がある、または着手する | spar で作成 / 更新した md を添えて `create-issue` skill へ（issue から main 反映を開始する）。md が無い純タスクなら issue だけ。新規案件はまず `git init` / `gh repo create` |
 | 何も残さず動く / 終える | 整理で十分、git 管理不要 | そのまま実行 / 終了 |
 | handoff して中断 | 次のセッションに引き継ぎたい | `handoff.md`（commit しない）に到達点・未解決論点・次の一歩を書いて終了 |
-
-「残す」では、doc を残すこと自体も issue を伴うタスクの一種として扱う（ローカル完結しない限り、doc を main に入れるにも issue → branch → PR が要る）。doc 化 issue も `create-issue` の同じテンプレートを使い、不要セクションは N/A で縮める（doc 化用の別テンプレートは作らない）。
 
 ## 4. 締め
 

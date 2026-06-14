@@ -16,14 +16,14 @@ zomians/organize の目的・スコープ・成功基準。
 現状把握 (壁打ち / リサーチ)
    ↓
 [ 出口の分岐 ]
- ├─ 残す (doc / issue / 両方)
+ ├─ 残す (issue 起点・md は添える)
  ├─ 何も残さず終える
  └─ 引き継いで中断する (handoff)
    ↓
 [ 残すと決めたものは ]
  リポジトリへ反映 (新規なら repo 化 / 既存なら該当リポへ)
    ↓
- 例外なく issue → 作業ブランチ → PR → squash merge → branch 削除
+ issue → 作業ブランチ → PR → squash merge → branch 削除
 ```
 
 含むもの:現状把握の壁打ち、必要時のリサーチ、ドキュメント化、リポ化、issue 起票、commit、PR 完了。

@@ -53,11 +53,11 @@ spar は対話が一段落したら、同じ作法（一問一答・推奨付き
 
 | 出口 | いつ |
 |---|---|
-| 残す（doc / issue / 両方） | 残す価値がある、または着手する |
+| 残す | 残す価値がある、または着手する |
 | 何も残さず動く / 終える | 整理で十分、git 管理不要 |
 | handoff して中断（handoff.md・揮発） | 次のセッションに引き継ぎたい |
 
-「残す」は doc・issue・その両方を包含する単一の出口。doc を残すこと自体も issue を伴うタスクの一種として扱い、**例外なく** issue → branch → PR に乗せる（ローカル完結しない限り、doc を main に入れるにも GitHub Flow が要る）。何を doc 化し何を issue 化するかは「残す」の中の粒度選択で、doc 化も「整理の成果を doc 化する」タスクとして issue にする。doc 化 issue も `create-issue` の同じテンプレートを使い、不要セクションは N/A で縮める（doc 化用の別テンプレートは作らない）。新規案件は `git init` / `gh repo create` → `#1「整理の成果を doc 化する」` issue → `feature/1-init` ブランチ → PR で初期 doc を入れる。
+「残す」は issue を起点に main 反映を開始する単一の出口。md（spar が §2 catalog 逆引きで作成 / 更新した doc）はそのタスクの成果物として issue に添え、同じ branch で残す。md を生まない純タスクなら issue だけ。ローカル完結しない限り、md を main に入れるにも GitHub Flow が要るので、出口の判断は「残すか否か」一軸で、doc / issue の振り分けを出口で問わない。新規案件は `git init` / `gh repo create` で repo 化してから始める。
 
 ## 規律
 
@@ -66,6 +66,6 @@ plugin が全案件に持たせる規律:
 - **DRY / YAGNI / TDD / Frequent commits**
 - **Conventional Commits**。1 PR = 1 squashed commit に収まる粒度
 - GitHub Flow / branch 命名 `feature/<#>-<summary>` / squash merge → branch 削除
-- **「残す」は例外なく issue → branch → PR に乗せる**。doc を残すこと自体も issue を伴うタスクの一種。新規案件の初期 doc も `#1「整理の成果を doc 化する」` issue 1 本にまとめ、`feature/1-init` で PR にする
+- **「残す」は issue を起点に main 反映する**。md は issue に添えて同じ branch で残す（doc を残すこと自体も issue を伴うタスクの一種）。md を生まない純タスクなら issue だけ
 - **コミットメッセージ・PR 本文・Issue 本文に AI 生成の旨を記載しない**（`🤖 Generated with...`、`Co-Authored-By: Claude...` 等は付与しない）
 - skill の `allowed-tools` には**副作用がありプロンプトが出るツールだけ書く**（`Bash(git:*)` 等）。read-only（Read/Grep/Glob/WebSearch/WebFetch）は既定でプロンプトが出ないので書かない。上書き系（doc の Write/Edit、`gh issue edit` 等）は自動許可せずプロンプトを残す
