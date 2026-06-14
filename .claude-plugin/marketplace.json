@@ -1,0 +1,13 @@
+{
+  "name": "organize",
+  "owner": {
+    "name": "zomia"
+  },
+  "plugins": [
+    {
+      "name": "organize",
+      "source": "./",
+      "description": "「情報を整理したい」と思った瞬間から終わりまでを一気通貫で支援する Claude Code plugin"
+    }
+  ]
+}
