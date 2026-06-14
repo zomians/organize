@@ -31,8 +31,6 @@
 | **commit** | 変更を規律（Conventional Commits・適切な粒度・branch 運用）に沿って commit する。 |
 | **create-pr** | commit 後に PR を作成し、TDD チェック・ブラウザ目視・確認を経て squash merge + branch 削除まで伴走する。 |
 
-doc 化・repo 化は独立 skill にせず、spar が出口で内包する。
-
 ## インストール
 
 Claude Code 上で marketplace を追加し、plugin を入れる:
