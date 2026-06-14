@@ -53,11 +53,9 @@ description: 整理の入口で行う、計画を鍛えるための壁打ち ski
 
 | 出口 | いつ | 次の誘導 |
 |---|---|---|
-| A. doc に残す（Catalog doc） | 残す価値がある | 対話を振り返り、doc 未反映の内容を Catalog に従い作成 / 更新（リポ未初期化なら先に `git init`。GitHub と繋ぐなら `gh repo create`）→ commit へ |
-| B. issue を直接発行 | やることが明確で、doc を経ずタスク化したい | `create-issue` skill へ |
-| C. doc も issue も両方 | 残す価値があり、かつ着手もする | doc 化（A と同じ）→ `create-issue` skill へ |
-| D. 何も残さず動く / 終える | 整理で十分、git 管理不要 | そのまま実行 / 終了 |
-| E. handoff して中断 | 次のセッションに引き継ぎたい | `handoff.md`（commit しない）に到達点・未解決論点・次の一歩を書いて終了 |
+| 残す | 残す価値がある、または着手する | spar で作成 / 更新した md を添えて `create-issue` skill へ（issue から main 反映を開始する）。md が無い純タスクなら issue だけ。新規案件はまず `git init` / `gh repo create` |
+| 何も残さず動く / 終える | 整理で十分、git 管理不要 | そのまま実行 / 終了 |
+| handoff して中断 | 次のセッションに引き継ぎたい | `handoff.md`（commit しない）に到達点・未解決論点・次の一歩を書いて終了 |
 
 ## 4. 締め
 
