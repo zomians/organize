@@ -67,3 +67,4 @@ plugin が全案件に持たせる規律:
 - **Conventional Commits**。1 PR = 1 squashed commit に収まる粒度
 - GitHub Flow / branch 命名 `feature/<#>-<summary>` / squash merge → branch 削除
 - **コミットメッセージ・PR 本文・Issue 本文に AI 生成の旨を記載しない**（`🤖 Generated with...`、`Co-Authored-By: Claude...` 等は付与しない）
+- skill の `allowed-tools` には**副作用がありプロンプトが出るツールだけ書く**（`Bash(git:*)` 等）。read-only（Read/Grep/Glob/WebSearch/WebFetch）は既定でプロンプトが出ないので書かない。上書き系（doc の Write/Edit、`gh issue edit` 等）は自動許可せずプロンプトを残す

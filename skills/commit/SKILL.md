@@ -1,6 +1,8 @@
 ---
 name: commit
 description: 変更を規律（Conventional Commits・適切な粒度・branch 運用）に沿って commit する。「commit したい」「コミットして」という意図が出たとき、または整理の出口・作業の区切りで commit が必要になったときに使う。
+allowed-tools:
+  - Bash(git:*)
 ---
 
 # commit
