@@ -1,7 +1,6 @@
 {
   "name": "organize",
   "description": "「情報を整理したい」と思った瞬間から終わりまでを一気通貫で支援する Claude Code plugin",
-  "version": "0.1.1",
   "author": {
     "name": "zomians"
   },
