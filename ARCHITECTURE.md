@@ -59,6 +59,21 @@ spar は対話が一段落したら、同じ作法（一問一答・推奨付き
 
 「残す」は issue を起点に main 反映を開始する単一の出口。md（spar が §2 catalog 逆引きで作成 / 更新した doc）はそのタスクの成果物として issue に添え、同じ branch で残す。md を生まない純タスクなら issue だけ。ローカル完結しない限り、md を main に入れるにも GitHub Flow が要るので、出口の判断は「残すか否か」一軸で、doc / issue の振り分けを出口で問わない。新規案件は `git init` / `gh repo create` で repo 化してから始める。
 
+## 自動実行（execution-phase automation）
+
+「残す」出口で、内包 skill（`create-issue` → `commit` → `create-pr`）を**事前確認ゲートを畳んで PR まで連続実行する**かを affordance として問える（spar が yes / no を問う。運用契約の正準は `skills/spar/SKILL.md` §3）。
+
+**なぜ畳んでよいか**: issue・PR は**成果物が返る実行フェーズ**で、人間は成果物（ブラウザで開く issue / PR）を事後レビューで検証でき、誤りは編集で直せる。だから各 skill の起票前 / commit / 作成前の確認を畳んでも出戻らない。一方、**真の探索フェーズ**（成果物が返らず、途中の判断を見ないと検証できないタスク）はこのモードに乗せない — 畳むと丸投げに滑る。
+
+**境界（畳まないもの）**:
+
+- **終点は PR 作成＋ブラウザ表示**。squash merge は人間が握る（畳まない）。
+- 接点は両端に集約 — 壁打ち（spar）と、issue / PR の成果物レビュー＋merge。中間の機械的実行だけを畳む。
+- **誤爆を防ぐ**: 自動実行は「spar の『PRまで自動実行』で yes を選んだ連鎖」という素性に限り発火する。各 skill を単発で呼んだときは確認を省かない（fail-closed）。
+- フォアグラウンドで回す（subagent / worktree は使わない）。「伴走 _Avoid_: オーケストレーション」と矛盾しない — 中央統括は導入せず、各 skill が末尾で次を促す既存の座組みのまま、確認ゲートだけを畳む。
+
+ARCHITECTURE は runtime の skill ロード経路に載らない（設計の根拠の置き場）。skill が実行時に従う契約は各 SKILL.md に自己完結で書く。
+
 ## 規律
 
 plugin が全案件に持たせる規律:
