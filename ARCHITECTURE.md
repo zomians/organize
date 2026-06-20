@@ -90,6 +90,21 @@ spar は対話が一段落したら、同じ作法（一問一答・推奨付き
 
 ARCHITECTURE は runtime の skill ロード経路に載らない（設計の根拠の置き場）。skill が実行時に従う契約は各 SKILL.md に自己完結で書く。
 
+## 発火漏れを塞ぐ soft nudge hook
+
+skill は description の signal を見てモデルが自発的に選ぶ **discoverable な仕組み**で、ツール経路を塞ぐ gate ではない。`create-issue` / `commit` の description は「issue にしたい」「commit したい」という *意図の言語化* を signal にしているため、会話の流れで作業に入ると誰もそのフレーズを口にせず、最短経路の `git commit` / `gh issue create` を直接叩いて skill が発火しないことがある。これは自動実行の **fail-closed（素性トリガに限る）の裏返し** — 「作業を skill 経由に誘導する gate が無い」状態である。
+
+これを `PreToolUse`（matcher: `Bash`）の **soft nudge hook**（[hooks/nudge-skill.sh](./hooks/nudge-skill.sh)）で塞ぐ。`git commit` / `gh issue create` / `gh pr create` を直接叩いた瞬間に、対応 skill の規律を `additionalContext` でコンテキストへ再浮上させる。
+
+**なぜ hook が許されるか**:
+
+- **末端反射であって中央オーケストレータではない**。ツール境界で発火する per-tool の反射で、フェーズ遷移を統括する層を足すわけではない。「重い中央制御は作らない」「伴走 _Avoid_: オーケストレーション」と矛盾しない（自動実行と同じ素性トリガ思想）。
+- **block でなく nudge**。`permissionDecision` は常に `allow`、非該当コマンドは無出力で素通し。plugin は全ディレクトリで有効だが、ブロックしないので organize 規律を効かせたくないリポでも無害。
+- **automation の fail-closed とは逆向きの gap を埋める**。automation は「素性が揃わない限り確認を畳まない」方向に閉じる。この hook は「直接経路でも規律を再浮上させる」方向に閉じる。両者は確認ゲートの両端を補完する。
+- **文言は scold でなく reinforce**。「規律に沿っているか、逸れていれば skill を通せ」基調にすることで、skill 実行中の `git commit` で redundant に発火しても no-op で済む（skill 内かどうかを hook は判別できないため）。
+
+検出コマンドの追加は `case` の 1 行で済む。skill 側 description には手を入れない（signal 駆動の疎結合を保つ）。
+
 ## 規律
 
 plugin が全案件に持たせる規律:
