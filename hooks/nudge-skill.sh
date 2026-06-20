@@ -6,15 +6,19 @@
 # gh pr create を直接叩いて create-issue / commit / create-pr skill が発火しないことがある。
 # この hook は直接経路を検出した瞬間に、対応 skill の規律をコンテキストへ再浮上させる。
 #
-# ブロックはしない（permissionDecision は常に allow）。全ディレクトリ有効な plugin でも
-# 無害であり、skill 実行中の redundant 発火でも no-op で済むよう「規律に沿っているか」基調にする。
-set -euo pipefail
+# 設計（公式 hooks 仕様に準拠）:
+#   - exit 0 で {hookSpecificOutput:{additionalContext}} を stdout に出すと、ツールを
+#     ブロックせずモデルのコンテキストに文字列を差し込める（＝soft nudge）。
+#   - permissionDecision は出さない。出すと "allow" が許可プロンプトを自動承認してしまい、
+#     「副作用のあるコマンドは許可プロンプトを残す」規律を骨抜きにする。nudge に徹する。
+#   - jq には依存しない。install 先に jq が無くても効くよう pure bash で書く。
+#     stdin 全体を case で部分一致（matcher: Bash なので tool_input.command が含まれる）。
+set -uo pipefail
 
 input=$(cat)
-command=$(printf '%s' "$input" | jq -r '.tool_input.command // empty')
 
 nudge=""
-case "$command" in
+case "$input" in
   *"git commit"*)
     nudge="この commit は commit skill の規律（Conventional Commits / 1 PR = 1 squashed commit 粒度 / handoff.md は除外 / branch 判断）に沿っていますか。逸れていれば commit skill を通してください。"
     ;;
@@ -26,7 +30,9 @@ case "$command" in
     ;;
 esac
 
+# additionalContext のみを出す（permissionDecision は出さない＝許可フローに触らない）。
+# nudge は固定文字列。" や \ を含めないこと（素の printf で JSON を組むため）。
 if [ -n "$nudge" ]; then
-  jq -n --arg ctx "$nudge" \
-    '{hookSpecificOutput: {hookEventName: "PreToolUse", permissionDecision: "allow", additionalContext: $ctx}}'
+  printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","additionalContext":"%s"}}\n' "$nudge"
 fi
+exit 0

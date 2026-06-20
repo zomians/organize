@@ -99,7 +99,8 @@ skill は description の signal を見てモデルが自発的に選ぶ **disco
 **なぜ hook が許されるか**:
 
 - **末端反射であって中央オーケストレータではない**。ツール境界で発火する per-tool の反射で、フェーズ遷移を統括する層を足すわけではない。「重い中央制御は作らない」「伴走 _Avoid_: オーケストレーション」と矛盾しない（自動実行と同じ素性トリガ思想）。
-- **block でなく nudge**。`permissionDecision` は常に `allow`、非該当コマンドは無出力で素通し。plugin は全ディレクトリで有効だが、ブロックしないので organize 規律を効かせたくないリポでも無害。
+- **block でなく nudge**。exit 0 で `hookSpecificOutput.additionalContext` だけを出す。`permissionDecision` は**出さない** — `allow` を返すと許可プロンプトを自動承認してしまい、「副作用のあるコマンドは許可プロンプトを残す」規律（§規律）を骨抜きにするため。非該当コマンドは無出力で素通し。plugin は全ディレクトリで有効だが、許可フローに触らず block もしないので organize 規律を効かせたくないリポでも無害。
+- **jq に依存しない**。install 先に jq が無くても効くよう pure bash で書く（stdin 全体を `case` で部分一致。matcher が `Bash` なので `tool_input.command` が含まれる）。nudge 文言は固定文字列なので素の `printf` で JSON を組める。
 - **automation の fail-closed とは逆向きの gap を埋める**。automation は「素性が揃わない限り確認を畳まない」方向に閉じる。この hook は「直接経路でも規律を再浮上させる」方向に閉じる。両者は確認ゲートの両端を補完する。
 - **文言は scold でなく reinforce**。「規律に沿っているか、逸れていれば skill を通せ」基調にすることで、skill 実行中の `git commit` で redundant に発火しても no-op で済む（skill 内かどうかを hook は判別できないため）。
 
