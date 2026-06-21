@@ -1,6 +1,6 @@
 ---
 name: create-pr
-description: commit 後に PR を作成し、TDD チェック・ブラウザ目視・確認を経て squash merge + branch 削除まで伴走する。「PR を出したい」「PR にして」という意図が出たとき、または commit skill の手順7から促されたときに使う。
+description: commit 後に PR を作成し、TDD チェック・ブラウザ目視・確認を経て squash merge + branch 削除まで伴走する。「PR を出したい」「PR にして」という意図が出たとき、または commit skill の手順7から促されたときに使う。アシスタント自身が「PR にしておきますか？」等と提案し利用者が「お願い」「うん」等で同意したときも、提案主体に関わらず発火する（同意で PR 意図が成立するため、伴走を通さない素の gh pr create に流さない）。
 allowed-tools:
   - Bash(git:*)
   - Bash(gh pr:*)

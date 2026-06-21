@@ -1,6 +1,6 @@
 ---
 name: commit
-description: 変更を規律（Conventional Commits・適切な粒度・branch 運用）に沿って commit する。「commit したい」「コミットして」という意図が出たとき、または整理の出口・作業の区切りで commit が必要になったときに使う。
+description: 変更を規律（Conventional Commits・適切な粒度・branch 運用）に沿って commit する。「commit したい」「コミットして」という意図が出たとき、または整理の出口・作業の区切りで commit が必要になったときに使う。アシスタント自身が「commit／push しておきますか？」等と提案し利用者が「お願い」「うん」等で同意したときも、提案主体に関わらず発火する（同意で commit 意図が成立するため、素の git commit に流さない）。
 allowed-tools:
   - Bash(git:*)
 ---

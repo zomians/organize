@@ -1,6 +1,6 @@
 ---
 name: create-issue
-description: GitHub issue をテンプレートに沿って高クオリティに起票する。「issue にしたい」「課題化したい」「タスク化したい」という意図が出たとき、または整理の出口として issue 起票が選ばれたときに使う。
+description: GitHub issue をテンプレートに沿って高クオリティに起票する。「issue にしたい」「課題化したい」「タスク化したい」という意図が出たとき、または整理の出口として issue 起票が選ばれたときに使う。アシスタント自身が「issue にしておきますか？」等と提案し利用者が「お願い」「うん」等で同意したときも、提案主体に関わらず発火する（同意で起票意図が成立するため、テンプレートを通さない素起票に流さない）。
 allowed-tools:
   - Bash(gh issue create:*)
   - Bash(gh issue view:*)
