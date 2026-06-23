@@ -100,13 +100,13 @@ skill は description の signal を見てモデルが自発的に選ぶ **disco
 
 - **阻止ではなく事後ナッジ**。公式 hooks 仕様上、`permissionDecision` を伴わない `additionalContext` は「ツール結果の隣」に挿入される＝**コマンド実行の"後"**にモデルが見る。よって hook は直叩きを *止められない*。できるのは事後のリカバリ誘導（薄い issue を `gh issue edit` で直す・commit を amend する等）で、フローの強制や順序の gate ではない。
 - **実行前の関所は permission プロンプトの方**。`git commit` / `gh issue create` / `gh pr create` は既定で許可プロンプトが出る（allow リストに足さない限り）。これが実行前に止める唯一の層で、hook はその上に乗る「人間が承認を素通ししても Claude 側が自己修正する」second chance。
-- **leaky blocklist を受容**。コマンド文字列の部分一致なので等価経路（`gh api .../issues|pulls` / `curl` / `git -C ... commit`）は取りこぼし、`git commit-tree` や語を含むだけの `echo` / `grep` には誤爆する。事後 no-op 寄りの nudge ゆえ誤爆は無害とみなし、漏れは permission プロンプトが per-user backstop する（完全網羅は追わない）。
+- **leak は別動詞のみ（縮小済み）**。`tool_input.command` を取り出して compound（`&&` `;` `|`）を分割し、git/gh のサブコマンドを判定する。よって `git -C/-c ... commit` や `cd x && git commit` は拾い、`git commit-tree` や語を含むだけの `echo` / `grep` には誤爆しない。取りこぼすのは別動詞の等価経路（`gh api .../issues|pulls` / `curl`）だけで、これは permission プロンプトが per-user backstop する（完全網羅は追わない）。
 
 **なぜ hook が許されるか**:
 
 - **末端反射であって中央オーケストレータではない**。ツール境界で発火する per-tool の反射で、フェーズ遷移を統括する層を足すわけではない。「重い中央制御は作らない」「伴走 _Avoid_: オーケストレーション」と矛盾しない。
 - **`permissionDecision` を出さない**。`allow` を返すと許可プロンプトを自動承認し、「副作用コマンドは許可プロンプトを残す」規律（§規律）を骨抜きにする＝permission backstop を hook 自身が潰す。出さない＝通常フローへ defer＝プロンプトが残る。
-- **jq に依存しない**。pure bash（stdin を `case` で部分一致）。precision（`.tool_input.command` 限定・構造照合で誤爆を消す）より移植性を優先した判断。
+- **jq に依存しない（`tr` のみ／POSIX）**。command フィールドを取り出し、compound 分割＋サブコマンド判定で実装する。移植性（jq 不要）と precision（誤爆排除・`git` の global option 形の捕捉）を両立する。
 - **文言は scold でなく reinforce**。skill 実行中の `git commit` で redundant に発火しても no-op で済む（skill 内かを hook は判別できないため）。
 
 blocking gate（AI 署名 deny）を採らない理由と決定の全体は ADR-0002。検出コマンドの追加は `case` の 1 行で済む。

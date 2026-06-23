@@ -14,21 +14,67 @@
 #     結果の隣＝実行"後"に挿入される（＝事前阻止でなく事後ナッジ）。
 #   - permissionDecision は出さない。出すと "allow" が許可プロンプトを自動承認してしまい、
 #     「副作用のあるコマンドは許可プロンプトを残す」規律を骨抜きにする。nudge に徹する。
-#   - jq には依存しない。install 先に jq が無くても効くよう pure bash で書く。
-#     stdin 全体を case で部分一致（matcher: Bash なので tool_input.command が含まれる）。
+#   - jq には依存しない（tr のみ／POSIX）。tool_input.command の値だけを取り出し、
+#     compound（&& ; |）をセグメント分割して各セグメントの先頭プログラムと git/gh の
+#     サブコマンドを判定する。これで `git -C/-c ... commit` を拾い、`commit-tree` や
+#     語を含むだけの echo/grep の誤爆を避ける。等価経路（gh api / curl）は対象外で
+#     permission プロンプトに委ねる（ADR-0002 の leaky blocklist 受容）。
 set -uo pipefail
 
 input=$(cat)
 
-nudge=""
+# tool_input.command の値だけを取り出す（cwd / transcript_path 等の混入を防ぐ）。
+# pure bash の best-effort 抽出: "command":"..." の値を最初の引用符まで。引用符で
+# 囲まれた引数（-m "msg" 等）は切り落とされるが、サブコマンドはそれより前に出るので
+# 判定には十分。
+cmd=""
 case "$input" in
-  *"git commit"*)
+  *'"command":"'*)
+    cmd=${input#*'"command":"'}
+    cmd=${cmd%%'"'*}
+    ;;
+esac
+
+# compound を分割し、各セグメントの先頭プログラムと git/gh サブコマンドを見て種別を返す。
+detect() {
+  local seg norm
+  norm=$(printf '%s' "$cmd" | tr ';|&' '\n\n\n')   # 区切りを改行化（&& も || も分割される）
+  while IFS= read -r seg; do
+    set -f; set -- $seg; set +f                     # noglob で単語分割
+    [ $# -eq 0 ] && continue
+    local prog=$1; shift
+    case "$prog" in
+      git)
+        while [ $# -gt 0 ]; do                       # global option を読み飛ばす
+          case "$1" in
+            -C|-c) shift 2 2>/dev/null || shift ;;   # 値を取るオプション
+            -*)    shift ;;                           # その他フラグ
+            *)     break ;;
+          esac
+        done
+        [ "${1:-}" = "commit" ] && { echo commit; return; }
+        ;;
+      gh)
+        case "${1:-} ${2:-}" in
+          "issue create") echo issue; return ;;
+          "pr create")    echo pr; return ;;
+        esac
+        ;;
+    esac
+  done <<EOF
+$norm
+EOF
+}
+
+nudge=""
+case "$(detect)" in
+  commit)
     nudge="この commit は commit skill の規律（Conventional Commits / 1 PR = 1 squashed commit 粒度 / handoff.md は除外 / branch 判断）に沿っていますか。逸れていれば commit skill を通してください。"
     ;;
-  *"gh issue create"*)
+  issue)
     nudge="この起票は create-issue skill のテンプレート（背景・要件・受け入れ基準・工数見積）を満たしていますか。薄ければ create-issue skill を通してください。"
     ;;
-  *"gh pr create"*)
+  pr)
     nudge="この PR 作成は create-pr skill の規律に沿っていますか。逸れていれば create-pr skill を通してください。"
     ;;
 esac

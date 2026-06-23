@@ -17,7 +17,7 @@ PreToolUse の **soft nudge hook**（`hooks/hooks.json` 同梱）を採用する
 
 - **nudge は事後リカバリ**。公式仕様上 `permissionDecision` 無しの `additionalContext` はツール結果の隣＝**実行後**に届くため、直叩きを阻止できない。できるのは事後の自己修正誘導のみ。
 - **実行前に止める関所は permission プロンプト**。対象 3 コマンドは既定でプロンプトが出る。nudge を出さない＝通常フローへ defer なのでこのプロンプトが残り、これが唯一の preventive 層になる。nudge はその上の second chance。
-- コマンド文字列照合は等価経路（`gh api` / `curl` / `git -C ... commit`）を取りこぼす leaky blocklist であり、完全網羅は追わない。漏れは各ユーザーの permission 運用（allow を絞り直叩きをプロンプトに晒す）が per-user backstop として補完する。
+- 検出は `tool_input.command` を取り出しサブコマンドを判定するため `git -C/-c ... commit`・compound は拾うが、別動詞の等価経路（`gh api` / `curl`）は対象外＝leaky であり完全網羅は追わない。漏れは各ユーザーの permission 運用（allow を絞り直叩きをプロンプトに晒す）が per-user backstop として補完する。
 
 ## 理由
 
