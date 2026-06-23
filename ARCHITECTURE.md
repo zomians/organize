@@ -90,21 +90,26 @@ spar は対話が一段落したら、同じ作法（一問一答・推奨付き
 
 ARCHITECTURE は runtime の skill ロード経路に載らない（設計の根拠の置き場）。skill が実行時に従う契約は各 SKILL.md に自己完結で書く。
 
-## 発火漏れを塞ぐ soft nudge hook
+## 発火漏れへの soft nudge hook（事後リカバリ）
 
-skill は description の signal を見てモデルが自発的に選ぶ **discoverable な仕組み**で、ツール経路を塞ぐ gate ではない。`create-issue` / `commit` の description は「issue にしたい」「commit したい」という *意図の言語化* を signal にしているため、会話の流れで作業に入ると誰もそのフレーズを口にせず、最短経路の `git commit` / `gh issue create` を直接叩いて skill が発火しないことがある。これは自動実行の **fail-closed（素性トリガに限る）の裏返し** — 「作業を skill 経由に誘導する gate が無い」状態である。
+skill は description の signal を見てモデルが自発的に選ぶ **discoverable な仕組み**で、ツール経路を塞ぐ gate ではない。`create-issue` / `commit` の description は「issue にしたい」「commit したい」という *意図の言語化* を signal にしているため、会話の流れで作業に入ると誰もそのフレーズを口にせず、最短経路の `git commit` / `gh issue create` / `gh pr create` を直接叩いて skill が発火しないことがある。
 
-これを `PreToolUse`（matcher: `Bash`）の **soft nudge hook**（[hooks/nudge-skill.sh](./hooks/nudge-skill.sh)）で塞ぐ。`git commit` / `gh issue create` / `gh pr create` を直接叩いた瞬間に、対応 skill の規律を `additionalContext` でコンテキストへ再浮上させる。
+これに `PreToolUse`（matcher: `Bash`）の **soft nudge hook**（[hooks/nudge-skill.sh](./hooks/nudge-skill.sh)）を当て、3 コマンドを検出したら対応 skill の規律を `additionalContext` で差し込む。
+
+**何をして・何をしないか（実態を正確に）**:
+
+- **阻止ではなく事後ナッジ**。公式 hooks 仕様上、`permissionDecision` を伴わない `additionalContext` は「ツール結果の隣」に挿入される＝**コマンド実行の"後"**にモデルが見る。よって hook は直叩きを *止められない*。できるのは事後のリカバリ誘導（薄い issue を `gh issue edit` で直す・commit を amend する等）で、フローの強制や順序の gate ではない。
+- **実行前の関所は permission プロンプトの方**。`git commit` / `gh issue create` / `gh pr create` は既定で許可プロンプトが出る（allow リストに足さない限り）。これが実行前に止める唯一の層で、hook はその上に乗る「人間が承認を素通ししても Claude 側が自己修正する」second chance。
+- **leaky blocklist を受容**。コマンド文字列の部分一致なので等価経路（`gh api .../issues|pulls` / `curl` / `git -C ... commit`）は取りこぼし、`git commit-tree` や語を含むだけの `echo` / `grep` には誤爆する。事後 no-op 寄りの nudge ゆえ誤爆は無害とみなし、漏れは permission プロンプトが per-user backstop する（完全網羅は追わない）。
 
 **なぜ hook が許されるか**:
 
-- **末端反射であって中央オーケストレータではない**。ツール境界で発火する per-tool の反射で、フェーズ遷移を統括する層を足すわけではない。「重い中央制御は作らない」「伴走 _Avoid_: オーケストレーション」と矛盾しない（自動実行と同じ素性トリガ思想）。
-- **block でなく nudge**。exit 0 で `hookSpecificOutput.additionalContext` だけを出す。`permissionDecision` は**出さない** — `allow` を返すと許可プロンプトを自動承認してしまい、「副作用のあるコマンドは許可プロンプトを残す」規律（§規律）を骨抜きにするため。非該当コマンドは無出力で素通し。plugin は全ディレクトリで有効だが、許可フローに触らず block もしないので organize 規律を効かせたくないリポでも無害。
-- **jq に依存しない**。install 先に jq が無くても効くよう pure bash で書く（stdin 全体を `case` で部分一致。matcher が `Bash` なので `tool_input.command` が含まれる）。nudge 文言は固定文字列なので素の `printf` で JSON を組める。
-- **automation の fail-closed とは逆向きの gap を埋める**。automation は「素性が揃わない限り確認を畳まない」方向に閉じる。この hook は「直接経路でも規律を再浮上させる」方向に閉じる。両者は確認ゲートの両端を補完する。
-- **文言は scold でなく reinforce**。「規律に沿っているか、逸れていれば skill を通せ」基調にすることで、skill 実行中の `git commit` で redundant に発火しても no-op で済む（skill 内かどうかを hook は判別できないため）。
+- **末端反射であって中央オーケストレータではない**。ツール境界で発火する per-tool の反射で、フェーズ遷移を統括する層を足すわけではない。「重い中央制御は作らない」「伴走 _Avoid_: オーケストレーション」と矛盾しない。
+- **`permissionDecision` を出さない**。`allow` を返すと許可プロンプトを自動承認し、「副作用コマンドは許可プロンプトを残す」規律（§規律）を骨抜きにする＝permission backstop を hook 自身が潰す。出さない＝通常フローへ defer＝プロンプトが残る。
+- **jq に依存しない**。pure bash（stdin を `case` で部分一致）。precision（`.tool_input.command` 限定・構造照合で誤爆を消す）より移植性を優先した判断。
+- **文言は scold でなく reinforce**。skill 実行中の `git commit` で redundant に発火しても no-op で済む（skill 内かを hook は判別できないため）。
 
-検出コマンドの追加は `case` の 1 行で済む。skill 側 description には手を入れない（signal 駆動の疎結合を保つ）。
+blocking gate（AI 署名 deny）を採らない理由と決定の全体は ADR-0002。検出コマンドの追加は `case` の 1 行で済む。
 
 ## 規律
 

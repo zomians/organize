@@ -1,14 +1,17 @@
 #!/usr/bin/env bash
-# organize: skill 発火漏れを塞ぐ soft nudge。
+# organize: skill 発火漏れへの soft nudge（事後リカバリ。実行前の阻止ではない）。
 #
 # skill は signal 駆動の discoverable な仕組みで、ツール経路を塞ぐ gate ではない。
 # 会話の流れで作業に入ると意図フレーズが出ず、最短経路の git commit / gh issue create /
 # gh pr create を直接叩いて create-issue / commit / create-pr skill が発火しないことがある。
-# この hook は直接経路を検出した瞬間に、対応 skill の規律をコンテキストへ再浮上させる。
+# この hook は直接経路を検出し、対応 skill の規律をコンテキストへ差し込む。ただし
+# additionalContext はツール実行"後"に届くため直叩きは止められない（事後リカバリのみ）。
+# 実行前に止める関所は permission プロンプト側（このコマンド群は既定でプロンプトが出る）。
 #
 # 設計（公式 hooks 仕様に準拠）:
 #   - exit 0 で {hookSpecificOutput:{additionalContext}} を stdout に出すと、ツールを
-#     ブロックせずモデルのコンテキストに文字列を差し込める（＝soft nudge）。
+#     ブロックせずモデルのコンテキストに文字列を差し込める。additionalContext はツール
+#     結果の隣＝実行"後"に挿入される（＝事前阻止でなく事後ナッジ）。
 #   - permissionDecision は出さない。出すと "allow" が許可プロンプトを自動承認してしまい、
 #     「副作用のあるコマンドは許可プロンプトを残す」規律を骨抜きにする。nudge に徹する。
 #   - jq には依存しない。install 先に jq が無くても効くよう pure bash で書く。
