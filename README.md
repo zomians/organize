@@ -42,6 +42,9 @@ Claude Code 上で marketplace を追加し、plugin を入れる:
 
 ```
 /plugin marketplace add zomians/organize
+```
+
+```
 /plugin install organize
 ```
 
