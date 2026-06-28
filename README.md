@@ -34,7 +34,7 @@
 | **patrol** | 整理の第二の入口。GitHub リポを巡回し、organize の核心（言語化 / GitHub flow）を診断レンズに「考えた方が良いこと」を負債として発掘する。揮発リストを置いて人間が 1 件選び、spar か直接アクションへ渡す。悩みがまだ無いときの入口。 |
 | **create-issue** | GitHub issue をテンプレートに沿って高クオリティに起票する。 |
 | **commit** | 変更を規律（Conventional Commits・適切な粒度・branch 運用）に沿って commit する。 |
-| **create-pr** | commit 後に PR を作成し、TDD チェック・ブラウザ目視・確認を経て squash merge + branch 削除まで伴走する。 |
+| **create-pr** | commit 後に PR を作成し、TDD チェック・ブラウザ目視・diff レビュー・確認を経て squash merge + branch 削除まで伴走する。 |
 
 ## インストール
 
