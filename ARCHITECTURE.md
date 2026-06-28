@@ -44,6 +44,8 @@ organize は Claude Code plugin。空ディレクトリでも skill が即使え
 
 issue 作成（`create-issue`）/ commit（`commit`）/ PR 完了（`create-pr`）。それぞれ末尾で次フェーズを促す。doc 化・repo 化は独立 skill にせず、spar が出口で内包する。
 
+`create-pr` は merge 前に Claude Code 組み込みの `/code-review` を**ソフトゲート**として挟む（ブラウザ目視と並走する前景レビュー。findings は提示するだけで判断は人間に委ね、機械的には止めない）。手順1 の TDD が red で止める hard block なのに対し review findings を止めないのは、findings が助言的で false positive を含むため（非対称の根拠は ADR-0003）。
+
 ## Doc Catalog（plugin 同梱の辞書）
 
 spar は Catalog を辞書として持ち、対話前に signal 列へ目を通したうえで（読んでいなければ signal に気づけない）、対話中に話題が踏み込んだら逆引きする。該当 doc が無ければ作成を能動提案し、有ればその場で更新する。Catalog は案件側の CLAUDE.md ではなく plugin に同梱する（plugin update で全案件に一括反映でき、案件ごとに Catalog がドリフトしない）。skill 側に doc リストを埋め込まず、Catalog を単一の真実とする。
@@ -83,7 +85,7 @@ spar は対話が一段落したら、同じ作法（一問一答・推奨付き
 
 **境界（畳まないもの）**:
 
-- **終点は PR 作成＋ブラウザ表示**。squash merge は人間が握る（畳まない）。
+- **終点は PR 作成＋ブラウザ表示＋diff レビュー結果（read-only）**。findings に基づく修正（`--fix`）と squash merge は人間が握る（畳まない）。レビュー findings は成果物なので、人間は merge 判断の前に「PR ＋ findings」をまとめて事後レビューできる。
 - 接点は両端に集約 — 壁打ち（spar）と、issue / PR の成果物レビュー＋merge。中間の機械的実行だけを畳む。
 - **誤爆を防ぐ**: 自動実行は「spar の『PRまで自動実行』で yes を選んだ連鎖」という素性に限り発火する。各 skill を単発で呼んだときは確認を省かない（fail-closed）。
 - フォアグラウンドで回す（subagent / worktree は使わない）。「伴走 _Avoid_: オーケストレーション」と矛盾しない — 中央統括は導入せず、各 skill が末尾で次を促す既存の座組みのまま、確認ゲートだけを畳む。

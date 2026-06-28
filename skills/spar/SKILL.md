@@ -65,7 +65,7 @@ description: 整理の入口で行う、計画を鍛えるための壁打ち ski
 - **no（既定）**: 従来どおり `create-issue` から逐次に進み、各 skill の事前確認ゲートで都度確認する。
 - **yes**: フォアグラウンドのまま `create-issue` → `commit` → `create-pr` を連鎖実行する。このモードの契約:
   - **省くのは事前確認ゲート 3 つだけ** — create-issue の起票前確認 / commit のメッセージ確認 / create-pr の作成前確認。下書きを提示して承認を待たず、そのまま実行する。
-  - **終点は PR 作成＋ブラウザ表示**（create-pr が PR を `--web` で開く）。**merge は畳まない**（squash merge は人間）。
+  - **終点は PR 作成＋ブラウザ表示＋diff レビュー（read-only）**（create-pr が PR を `--web` で開き、merge 前に `/code-review` を read-only で走らせ findings を提示する）。**merge と findings に基づく修正は畳まない**（squash merge・`--fix` は人間）。
   - 事後レビューは成果物で行う — create-issue が issue を、create-pr が PR をブラウザで開くので、人間はそこで検証し、必要なら `gh issue edit` / PR 編集で直す。
   - **発火は素性で固定**: 自動実行モードは「この出口で yes を選んだ連鎖」に限る。各 skill を単発で呼んだときは事前確認を省かない（fail-closed。迷ったら確認する）。
   - subagent / worktree は使わない（フォアグラウンド）。真の探索（成果物が返らないタスク）はこのモードに乗せない。
