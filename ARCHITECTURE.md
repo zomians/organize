@@ -88,7 +88,7 @@ spar は対話が一段落したら、同じ作法（一問一答・推奨付き
 - **終点は PR 作成＋ブラウザ表示＋diff レビュー結果（read-only）**。findings に基づく修正（`--fix`）と squash merge は人間が握る（畳まない）。レビュー findings は成果物なので、人間は merge 判断の前に「PR ＋ findings」をまとめて事後レビューできる。
 - 接点は両端に集約 — 壁打ち（spar）と、issue / PR の成果物レビュー＋merge。中間の機械的実行だけを畳む。
 - **誤爆を防ぐ**: 自動実行は「spar の『PRまで自動実行』で yes を選んだ連鎖」という素性に限り発火する。各 skill を単発で呼んだときは確認を省かない（fail-closed）。
-- フォアグラウンドで回す（subagent / worktree は使わない）。「伴走 _Avoid_: オーケストレーション」と矛盾しない — 中央統括は導入せず、各 skill が末尾で次を促す既存の座組みのまま、確認ゲートだけを畳む。
+- フォアグラウンドで回す（subagent / worktree は使わない）。「伴走 _Avoid_: オーケストレーション」と矛盾しない — 中央統括は導入せず、各 skill が末尾で次を促す既存の座組みのまま、確認ゲートだけを畳む。この subagent 不使用は **organize 自身のフェーズ orchestration に係る制約**（自フェーズを subagent / worktree に委譲しない＝中央オーケストレータ化しない）であって、フォアグラウンドで呼ぶ成果物ツール（merge 前の `/code-review` 等）が内部で finder/verifier に fan-out するのは妨げない — 成果物（findings）が返り人間が事後検証できる以上「丸投げ」ではない。code-review 起動時に出る許可プロンプトは、自動実行が温存する per-user backstop（ADR-0002）であって畳む対象ではない。
 
 ARCHITECTURE は runtime の skill ロード経路に載らない（設計の根拠の置き場）。skill が実行時に従う契約は各 SKILL.md に自己完結で書く。
 
