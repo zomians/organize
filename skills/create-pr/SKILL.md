@@ -17,7 +17,7 @@ allowed-tools:
    - テストなし → そのテストが必要かを判断し、必要ならテスト作成を提案する。不要ならスキップして次へ進む
 2. **PR 作成**: `gh pr create` で PR を作る。本文は下記の軽量な型で下書きし、利用者に提示して確認を得てから作成する（spar の「PRまで自動実行」で yes を選んだ連鎖から起動された自動実行モードのときに限り、この事前確認を省いてそのまま作成する。単発呼び出しや迷ったときは省かない＝fail-closed）。本文は stdin で渡す（`gh pr create --title "<title>" --body-file -`）。
 3. **ブラウザ表示**: `gh pr view --web` で PR を必ずブラウザ表示し、利用者に目視させる。続く手順4 の diff レビューはこの目視と並走する（人間の目視時間に計算を重ねる）。
-4. **code-review（diff レビュー・ソフトゲート）**: 前景 `/code-review`（既定 low〜medium）を走らせ、merge 前に diff をレビューする。
+4. **code-review（diff レビュー・ソフトゲート）**: 前景 `/code-review medium`（重い diff は利用者が `high` / `max` / `ultra` に上げられる）を走らせ、merge 前に diff をレビューする。
    - findings を利用者に提示する。**ソフトゲート** — 判断は人間に委ねる（そのまま merge / `--fix` で直して再確認 / 中断）。findings が空・軽微なら次へ進む。findings は助言的で false positive を含むため、手順1 の TDD（red で止める hard block）と違い、**findings で機械的に merge を止めない**（この非対称の根拠は ADR-0003）。
    - 重い diff は利用者が effort を high / ultra に上げられる（ultra はクラウドで user-triggered。create-pr からは起動しないので、必要なら利用者に促す）。
    - **自動実行モードのとき**: read-only で走らせ findings を提示して止まる（`--fix` しない）。**自動実行モードの終点はここ** — findings に基づく修正と続く merge（手順5-6）・締め（手順7）は自動実行でも畳まず、必ず人間が握る。
