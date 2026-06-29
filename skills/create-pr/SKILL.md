@@ -19,7 +19,7 @@ allowed-tools:
 3. **ブラウザ表示**: `gh pr view --web` で PR を必ずブラウザ表示し、利用者に目視させる。続く手順4 の diff レビューはこの目視と並走する（人間の目視時間に計算を重ねる）。
 4. **code-review（diff レビュー・ソフトゲート）**: 前景 `/code-review medium`（重い diff は利用者が `high` / `max` / `ultra` に上げられる）を走らせ、merge 前に diff をレビューする。
    - findings を利用者に提示する。**ソフトゲート** — 判断は人間に委ねる（そのまま merge / `--fix` で直して再確認 / 中断）。findings が空・軽微なら次へ進む。findings は助言的で false positive を含むため、手順1 の TDD（red で止める hard block）と違い、**findings で機械的に merge を止めない**（この非対称の根拠は ADR-0003）。
-   - 重い diff は利用者が effort を high / ultra に上げられる（ultra はクラウドで user-triggered。create-pr からは起動しないので、必要なら利用者に促す）。
+   - 重い diff は利用者が effort を high / max / ultra に上げられる（ultra はクラウドで user-triggered。create-pr からは起動しないので、必要なら利用者に促す）。
    - **自動実行モードのとき**: read-only で走らせ findings を提示して止まる（`--fix` しない）。**自動実行モードの終点はここ** — findings に基づく修正と続く merge（手順5-6）・締め（手順7）は自動実行でも畳まず、必ず人間が握る。
 5. **merge 権限の確認**: 利用者に merge 権限があるか問う。
 6. **merge**:
