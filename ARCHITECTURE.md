@@ -26,6 +26,14 @@ organize は Claude Code plugin。空ディレクトリでも skill が即使え
 
 **コードとの照合はコード有り案件のみ**。コード無し案件（マーケ・リサーチ等）では skip する。
 
+**draft first（doc は書いてから直させる）**: signal を逆引きして doc に当てる段では、聞き出してから書くのではなく、**doc 本文の draft を会話に提示して赤入れさせる**。未言語化の情報は、白紙から思い出させる（recall）より具体物への違和感として指摘させる（recognition）方が出る。運用契約の正準は `skills/spar/SKILL.md` §2、決定の全体は ADR-0004。
+
+- **既定の手にする**（条件付き発火にしない）。「詰まったら draft」では最も危ない「スラスラ答えているが浅い」ケースを取りこぼす。発火条件を assistant の判定に委ねないことでドリフトも防ぐ。想像の混入は選択肢を絞らず `<?>` の明示で潰す。
+- **draft はファイルにしない**（会話に留める）。合意前の本文がファイルとして在ると「決定済み」と誤読され、出口が「何も残さず終える / handoff」だったときにゴミが残る。「本文は会話で提示し、コマンドへは stdin で渡す」（→ handoff.md は commit しない）と同型に揃え、新しい例外を作らない。
+- **粒度は signal に従属させる**。doc 単位でも固定行数でもなく、surface した signal が指す範囲だけを draft にする。逆引きが既に「走査ではなく signal が範囲を決める」設計なので、新しい判定軸が要らない。
+- **§1（鍛え方）には置かない**。§1 に並ぶのは「既に出た発言を叩く」手（矛盾指摘・正準化・シナリオ・コード照合）で、draft first は発言が無い所を埋める手。混ぜると spar の輪郭がぼやける（ADR-0001 の系譜）。
+- **patrol には波及させない**。patrol は結論を出さず出力をファイル化しない skill で、doc draft を持ち込むとその identity とぶつかる。§2 に置けば spar 限定で閉じる。
+
 ### patrol（第二の入口・探す）
 
 整理対象を外から探す入口 skill。spar が頭の中の悩みを内から引き出すのに対し、patrol は GitHub リポを巡回して、まだ言語化されていない論点を外から持ち込む（情報の向きが逆）。素プロンプトでも plugin のプラットフォーム化でもなく、Claude Code の skill 追加で実現する（「層を増やすな」に沿う。巡回先が増えても skill を足せばよい）。
@@ -48,14 +56,14 @@ issue 作成（`create-issue`）/ commit（`commit`）/ PR 完了（`create-pr`�
 
 ## Doc Catalog（plugin 同梱の辞書）
 
-spar は Catalog を辞書として持ち、対話前に signal 列へ目を通したうえで（読んでいなければ signal に気づけない）、対話中に話題が踏み込んだら逆引きする。該当 doc が無ければ作成を能動提案し、有ればその場で更新する。Catalog は案件側の CLAUDE.md ではなく plugin に同梱する（plugin update で全案件に一括反映でき、案件ごとに Catalog がドリフトしない）。skill 側に doc リストを埋め込まず、Catalog を単一の真実とする。
+spar は Catalog を辞書として持ち、対話前に signal 列へ目を通したうえで（読んでいなければ signal に気づけない）、対話中に話題が踏み込んだら逆引きする。当てる doc が決まったら本文の draft を会話に提示して赤入れさせ（→ §spar「draft first」）、確定した内容で作成 / 更新する。Catalog は案件側の CLAUDE.md ではなく plugin に同梱する（plugin update で全案件に一括反映でき、案件ごとに Catalog がドリフトしない）。skill 側に doc リストを埋め込まず、Catalog を単一の真実とする。
 
 ### doc 作成のルール（全 doc 共通）
 
 - **全 doc は lazy 作成**。signal が出るまで作らない。空の placeholder ファイルは一切置かない。doc の違いは「Catalog 辞書に載っているか否か」だけで、doc 別に常設/lazy を決めることはしない
 - **inline 更新**: 関連話題が出るたびその場で更新する（まとめて後でやらない）
 - **配置**: リポ root に置く（ファイル名は Catalog の通り）。肥大化したら `docs/` 配下を検討
-- **Catalog にない doc** が必要になったら、その場で必要性を判断し、表に行を足す
+- **Catalog にない doc** が必要になっても、その場で catalog に行を足さない。Catalog は plugin 同梱ファイルで、案件側から書き換えても plugin update で消え、「案件ごとにドリフトしない」根拠が崩れる。Catalog は逆引き辞書であって doc の許可リストではないので、必要な doc はその場で作り、Catalog 自体の拡充は organize への issue で扱う
 
 ### handoff.md は commit しない
 
