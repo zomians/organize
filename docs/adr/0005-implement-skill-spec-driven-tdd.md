@@ -10,7 +10,7 @@ organize は issue と commit のあいだ（実装）を持つ skill が無く�
 ## 決定
 
 - 実装フェーズ skill `implement` を新設する。順序は テスト → red 確認 → テストレビュー → ソース → green 確認 → ソースレビュー → commit
-- TDD を回すか否かは issue のテスト計画が決める（不要なら `N/A`＋理由）
+- TDD を回すか否かは issue のテスト計画が決める（不要なら `N/A`＋理由。このときソースレビューも飛ばす）
 - テストレビューは organize 独自の read-only サブエージェント（Sonnet・fork しない・入力は issue / 仕様書 / テスト diff のみ）。指摘は本体が直して red 再確認、再レビューはしない
 - ソースレビューは `/code-review low`。ADR-0003 のソフトゲートを引き継ぎ、置き場所だけ create-pr から implement へ移す
 - 仕様書が恒久的な正、issue は差分。食い違ったら止まって問う
