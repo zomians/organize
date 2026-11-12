@@ -36,5 +36,20 @@ spar の対話が一段落した後の分岐。残す（issue 起点で main 反
 _Avoid_: 完了、エンド
 
 **自動実行（自動実行モード）**:
-「残す」出口で内包 skill（create-issue → commit → create-pr）を、事前確認ゲートを畳んでフォアグラウンドで PR 作成＋ブラウザ表示＋diff レビュー（read-only）まで連続実行すること。終点は PR の成果物（PR ＋ diff レビュー結果。merge と findings に基づく修正は人間）。発火は spar の「PRまで自動実行」yes の連鎖に限る（素性トリガ・fail-closed）。
+「残す」出口で内包 skill（create-issue → implement → commit → create-pr）を、事前確認ゲートを畳んでフォアグラウンドで PR 作成＋ブラウザ表示＋ソースレビューの findings（read-only）まで連続実行すること。終点は PR の成果物（PR ＋ ソースレビュー結果。merge と findings に基づく修正は人間）。仕様の食い違いとテスト凍結の破れでは自動実行でも止まる。発火は spar の「PRまで自動実行」yes の連鎖に限る（素性トリガ・fail-closed）。
 _Avoid_: 委譲（subagent に渡すことではない）、オーケストレーション（中央統括ではない）、丸投げ（成果物で検証できる実行フェーズに限る）
+
+**implement**:
+issue（と仕様書）を設計として TDD で実装する実装フェーズ skill。テスト → red 確認 → テストレビュー → ソース → green 確認 → ソースレビュー → commit の順で回す。
+_Avoid_: tdd（skill 名としては使わない。TDD は手順の名前）
+
+**テストレビュー**:
+implement で red 確認後・ソース前に行う、テストが仕様（issue / 仕様書）の写しになっているかだけを見るレビュー。独自の read-only サブエージェントが行う。
+_Avoid_: 仕様レビュー（仕様そのものを見るのではない）、code-review（汎用 diff レビューとは別物）
+
+**ソースレビュー**:
+implement で green 確認後に行う、テストの外側（設計・可読性・テスト外の副作用）を見るレビュー。`/code-review low` で行い、ソフトゲートとして扱う。
+
+**テスト凍結**:
+テストレビューを通ったテストを、ソース段で書き換えないこと。変更が必要、または green に届かないときは止まって人間に問う。
+_Avoid_: テスト固定（fixture と紛らわしい）

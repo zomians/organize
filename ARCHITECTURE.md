@@ -35,9 +35,16 @@ organize は Claude Code plugin。空ディレクトリでも skill が即使え
 
 ### 後続フェーズ skill
 
-issue 作成（`create-issue`）/ commit（`commit`）/ PR 完了（`create-pr`）。それぞれ末尾で次フェーズを促す。doc 化・repo 化は独立 skill にせず、spar が出口で内包する。
+issue 作成（`create-issue`）/ 実装（`implement`）/ commit（`commit`）/ PR 完了（`create-pr`）。それぞれ末尾で次フェーズを促す。doc 化・repo 化は独立 skill にせず、spar が出口で内包する。
 
-`create-pr` は merge 前に Claude Code 組み込みの `/code-review` を**ソフトゲート**として挟む（ブラウザ目視と並走する前景レビュー。findings は提示するだけで判断は人間に委ね、機械的には止めない）。手順1 の TDD が red で止める hard block なのに対し review findings を止めないのは、findings が助言的で false positive を含むため（非対称の根拠は ADR-0003）。
+### implement（実装・テスト＝仕様）
+
+issue（と仕様書）を設計として TDD で実装する。順序は テスト → red 確認 → テストレビュー → ソース → green 確認 → ソースレビュー → commit。運用契約の正準は `skills/implement/SKILL.md`、決定の全体は ADR-0005。
+
+- **テスト＝仕様**: テストは issue の FR・受け入れ基準・テスト計画の写しとして先に書く。TDD を回すか否かは issue のテスト計画が決める（`N/A`＋理由ならテスト工程を飛ばしソースレビューのみ）。仕様書が恒久的な正、issue は差分で、食い違ったら止まって問う。
+- **レビューは基準つきで分担する**: テストレビューは独自の read-only サブエージェント（Sonnet・fork しない・入力は issue / 仕様書 / テスト diff）で「テストが仕様の写しか」だけを見る。ソースレビューは `/code-review low` でテストの外側を見る。汎用 diff レビューを基準なしで重く回す代わりに、観点と入力を絞って過剰反応と使用量を抑える。
+- **テスト凍結**: テストレビューを通ったテストはソース段で書き換えない。必要なら、または green に届かなければ止まって問う。
+- ソースレビューは ADR-0003 のソフトゲートを引き継ぐ（findings は提示、判断は人間）。手順中の TDD（red / green）は hard。
 
 ## Doc Catalog（plugin 同梱の辞書）
 
@@ -72,16 +79,17 @@ spar は対話が一段落したら、同じ作法（一問一答・推奨付き
 
 ## 自動実行（execution-phase automation）
 
-「残す」出口で、内包 skill（`create-issue` → `commit` → `create-pr`）を**事前確認ゲートを畳んで PR まで連続実行する**かを affordance として問える（spar が yes / no を問う。運用契約の正準は `skills/spar/SKILL.md` §3）。
+「残す」出口で、内包 skill（`create-issue` → `implement` → `commit` → `create-pr`）を**事前確認ゲートを畳んで PR まで連続実行する**かを affordance として問える（spar が yes / no を問う。運用契約の正準は `skills/spar/SKILL.md` §3）。
 
 **なぜ畳んでよいか**: issue・PR は**成果物が返る実行フェーズ**で、人間は成果物（ブラウザで開く issue / PR）を事後レビューで検証でき、誤りは編集で直せる。だから各 skill の起票前 / commit / 作成前の確認を畳んでも出戻らない。一方、**真の探索フェーズ**（成果物が返らず、途中の判断を見ないと検証できないタスク）はこのモードに乗せない — 畳むと丸投げに滑る。
 
 **境界（畳まないもの）**:
 
-- **終点は PR 作成＋ブラウザ表示＋diff レビュー結果（read-only）**。findings に基づく修正（`--fix`）と squash merge は人間が握る（畳まない）。レビュー findings は成果物なので、人間は merge 判断の前に「PR ＋ findings」をまとめて事後レビューできる。
+- **終点は PR 作成＋ブラウザ表示＋ソースレビューの findings（read-only）**。ソースレビューは implement で read-only に走らせ、findings を PR まで持ち越す。findings に基づく修正（`--fix`）と squash merge は人間が握る（畳まない）。レビュー findings は成果物なので、人間は merge 判断の前に「PR ＋ findings」をまとめて事後レビューできる。
+- **自動実行でも止まる**: implement の仕様の食い違い（issue と仕様書の衝突）と、凍結テストの変更・green 未達。これらは確認ではなく仕様の決定で、成果物から事後に取り返せないため畳まない（ADR-0005）。
 - 接点は両端に集約 — 壁打ち（spar）と、issue / PR の成果物レビュー＋merge。中間の機械的実行だけを畳む。
 - **誤爆を防ぐ**: 自動実行は「spar の『PRまで自動実行』で yes を選んだ連鎖」という素性に限り発火する。各 skill を単発で呼んだときは確認を省かない（fail-closed）。
-- フォアグラウンドで回す（subagent / worktree は使わない）。「伴走 _Avoid_: オーケストレーション」と矛盾しない — 中央統括は導入せず、各 skill が末尾で次を促す既存の座組みのまま、確認ゲートだけを畳む。この subagent 不使用は **organize 自身のフェーズ orchestration に係る制約**（自フェーズを subagent / worktree に委譲しない＝中央オーケストレータ化しない）であって、フォアグラウンドで呼ぶ成果物ツール（merge 前の `/code-review` 等）が内部で finder/verifier に fan-out するのは妨げない — 成果物（findings）が返り人間が事後検証できる以上「丸投げ」ではない。code-review 起動時に出る許可プロンプトは、自動実行が温存する per-user backstop（ADR-0002）であって畳む対象ではない。
+- フォアグラウンドで回す（subagent / worktree は使わない）。「伴走 _Avoid_: オーケストレーション」と矛盾しない — 中央統括は導入せず、各 skill が末尾で次を促す既存の座組みのまま、確認ゲートだけを畳む。この subagent 不使用は **organize 自身のフェーズ orchestration に係る制約**（自フェーズを subagent / worktree に委譲しない＝中央オーケストレータ化しない）であって、read-only で findings を返すレビュー（implement のテストレビュー用サブエージェント、ソースレビューの `/code-review` が内部で finder/verifier に fan-out すること）は妨げない — 成果物（findings）が返り人間が事後検証できる以上「丸投げ」ではない。code-review 起動時に出る許可プロンプトは、自動実行が温存する per-user backstop（ADR-0002）であって畳む対象ではない。
 
 ARCHITECTURE は runtime の skill ロード経路に載らない（設計の根拠の置き場）。skill が実行時に従う契約は各 SKILL.md に自己完結で書く。
 
