@@ -74,12 +74,13 @@ description: 整理の入口で行う、計画を鍛えるための壁打ち ski
 「PRまで自動実行しますか？」を推奨付きで問う（offered affordance。強制しない）。これは organize の「自動実行モード」の唯一の起動点であり、その運用契約の正準定義でもある:
 
 - **no（既定）**: 従来どおり `create-issue` から逐次に進み、各 skill の事前確認ゲートで都度確認する。
-- **yes**: フォアグラウンドのまま `create-issue` → `commit` → `create-pr` を連鎖実行する。このモードの契約:
+- **yes**: フォアグラウンドのまま `create-issue` → `implement` → `commit` → `create-pr` を連鎖実行する。このモードの契約:
   - **省くのは事前確認ゲート 3 つだけ** — create-issue の起票前確認 / commit のメッセージ確認 / create-pr の作成前確認。下書きを提示して承認を待たず、そのまま実行する。
-  - **終点は PR 作成＋ブラウザ表示＋diff レビュー結果（read-only）**（create-pr が PR を `--web` で開き、merge 前に `/code-review` を read-only で走らせ findings を提示する）。**merge と findings に基づく修正は畳まない**（squash merge・`--fix` は人間）。
+  - **終点は PR 作成＋ブラウザ表示＋ソースレビューの findings（read-only）**（implement が `/code-review low` を read-only で走らせて findings を控え、create-pr が PR を `--web` で開いて findings を提示する）。**merge と findings に基づく修正は畳まない**（squash merge・`--fix` は人間）。
+  - **自動実行でも止まる**: implement の issue と仕様書の食い違い・テスト凍結の破れ・green 未達。確認ではなく仕様の決定なので畳まない。
   - 事後レビューは成果物で行う — create-issue が issue を、create-pr が PR をブラウザで開くので、人間はそこで検証し、必要なら `gh issue edit` / PR 編集で直す。
   - **発火は素性で固定**: 自動実行モードは「この出口で yes を選んだ連鎖」に限る。各 skill を単発で呼んだときは事前確認を省かない（fail-closed。迷ったら確認する）。
-  - subagent / worktree は使わない（フォアグラウンド）。これは organize が自フェーズ（create-issue → commit → create-pr）を subagent に委譲しない＝中央オーケストレータ化しないという意味で、フォアグラウンドで呼ぶ成果物ツール（merge 前の `/code-review` 等）が内部で fan-out するのは妨げない（成果物が返り人間が事後検証できる限り）。真の探索（成果物が返らないタスク）はこのモードに乗せない。
+  - subagent / worktree は使わない（フォアグラウンド）。これは organize が自フェーズ（create-issue → implement → commit → create-pr）を subagent に委譲しない＝中央オーケストレータ化しないという意味で、read-only で findings を返すレビュー（implement のテストレビュー用サブエージェント、ソースレビューの `/code-review` の内部 fan-out）は妨げない（成果物が返り人間が事後検証できる限り）。真の探索（成果物が返らないタスク）はこのモードに乗せない。
 
 ## 4. 締め
 

@@ -1,6 +1,6 @@
 # ADR-0003: create-pr の code-review は soft gate（findings は人間判断）とし、自動モードは read-only で走らせる
 
-- ステータス: 採用
+- ステータス: 一部上書き（ADR-0005: レビューの置き場所を create-pr から implement へ移し、effort を low にした。ソフトゲートと自動実行での read-only の決定は有効）
 - 日付: 2026-06-28
 
 ## 文脈

@@ -19,7 +19,7 @@
    ↓  残すと決めたら
  リポ化（新規なら git init / gh repo create・既存なら該当リポへ）
    ↓
- issue → 作業ブランチ → PR → squash merge → branch 削除
+ issue → 作業ブランチ → 実装（テスト → red → テストレビュー → ソース → green → ソースレビュー）→ PR → squash merge → branch 削除
 ```
 
 フェーズ間の遷移に中央のオーケストレータを置かない。各 skill が末尾で次を能動的に促し、利用者は途中フェーズだけを単独で使うこともできる。
@@ -30,8 +30,9 @@
 |---|---|
 | **spar** | 整理の入口。計画を鍛える壁打ちを一問一答・推奨案付きで行い、矛盾・曖昧さ・未検証の前提を突く。surface した signal から必要な doc を逆引きし、本文の下書きを提示して赤入れさせながら残し、最後に出口へ案内する。 |
 | **create-issue** | GitHub issue をテンプレートに沿って高クオリティに起票する。 |
+| **implement** | issue（と仕様書）を設計として TDD で実装する。テストを仕様の写しとして先に書いて red を確認し、サブエージェントのテストレビュー → ソース → green → `/code-review low` のソースレビューの順に回す。 |
 | **commit** | 変更を規律（Conventional Commits・適切な粒度・branch 運用）に沿って commit する。 |
-| **create-pr** | commit 後に PR を作成し、TDD チェック・ブラウザ目視・diff レビュー・確認を経て squash merge + branch 削除まで伴走する。 |
+| **create-pr** | implement 完了後に PR を作成し、ブラウザ目視・確認を経て squash merge + branch 削除まで伴走する。 |
 
 ## インストール
 

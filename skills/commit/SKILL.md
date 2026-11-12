@@ -20,7 +20,7 @@ allowed-tools:
 4. **ステージ**: 対象の変更をステージする。`handoff.md` はステージしない（commit 対象外）。
 5. **メッセージ下書き**: Conventional Commits の型でメッセージを下書きし、利用者に提示して確認を得る（spar の「PRまで自動実行」で yes を選んだ連鎖から起動された自動実行モードのときに限り、この確認を省いてそのまま commit する。単発呼び出しや迷ったときは省かない＝fail-closed）。
 6. **commit**: 確認後に commit する。
-7. **次へ**: commit 後、PR を出すか問い、出すなら `create-pr` skill（PR 完了フェーズ）へ促す。
+7. **次へ**: `implement` のサイクルから呼ばれたときは、PR を問わず implement の次の手順へ戻る。それ以外は、commit 後に PR を出すか問い、出すなら `create-pr` skill（PR 完了フェーズ）へ促す。
 
 ## 禁止
 
