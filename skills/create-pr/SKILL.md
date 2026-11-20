@@ -14,7 +14,7 @@ allowed-tools:
 
 1. **PR 作成**: `gh pr create` で PR を作る。本文は下記の軽量な型で下書きし、利用者に提示して確認を得てから作成する（spar の「PRまで自動実行」で yes を選んだ連鎖から起動された自動実行モードのときに限り、この事前確認を省いてそのまま作成する。単発呼び出しや迷ったときは省かない＝fail-closed）。本文は stdin で渡す（`gh pr create --title "<title>" --body-file -`）。
 2. **ブラウザ表示**: `gh pr view --web` で PR を必ずブラウザ表示し、利用者に目視させる。
-   - **自動実行モードのとき**: implement から渡されたソースレビューの findings をここで提示する。**自動実行モードの終点はここ** — findings に基づく修正と続く merge（手順3-4）・締め（手順5）は自動実行でも畳まず、必ず人間が握る。
+   - **自動実行モードのとき**: implement から渡されたソースレビューの findings を、`## スコープレビュー` / `## code-review` に分けてここで提示する（テスト計画が `N/A` ならスコープレビューのみ）。**自動実行モードの終点はここ** — findings に基づく修正と続く merge（手順3-4）・締め（手順5）は自動実行でも畳まず、必ず人間が握る。
 3. **merge 権限の確認**: 利用者に merge 権限があるか問う。
 4. **merge**:
    - 権限あり → 確認を得た上で `gh pr merge --squash --delete-branch` で squash merge + branch 削除する
